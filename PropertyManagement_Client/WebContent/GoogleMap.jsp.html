@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<%@page import="java.util.List"%>
+<%@page import="com.propertymanagement.DTO.AdvertsimentInfo"%>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<title>Info windows</title>
+<style>
+html,body,#map-canvas {
+	height: 80%;
+	margin: 0px;
+	padding: 0px
+}
+</style>
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBo4uWkbt2sj0oa0YAMPUphcmqFpD4FrfQ&sensor=SET_TO_TRUE_OR_FALSE"></script>
+<script>
+// This example displays a marker at the center of Australia.
+// When the user clicks the marker, an info window opens.
+
+function initialize() {
+  var myLatlng = new google.maps.LatLng(39.50,-98.35);
+  var mapOptions = {
+    zoom: 4,
+    center: myLatlng
+  };
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+
+      <%if(session.getAttribute("newsFeed")!=null)
+      {
+    	  List<AdvertsimentInfo> aList=(List<AdvertsimentInfo>)session.getAttribute("newsFeed");
+    	  int counter=1;
+    	  for(AdvertsimentInfo aInfo:aList)
+    	  {
+    		  counter++;%>
+  					var contentString<%out.print(counter);%> ='<div id="content">'+ '<%out.print(aInfo.getPropertyInfo());%>'+'</div>';
+	 
+  var infowindow<%out.print(counter);%> = new google.maps.InfoWindow({
+      content: contentString<%out.print(counter);%>
+  });
+  
+  var myLatlng<%out.print(counter);%> = new google.maps.LatLng(<%out.print(aInfo.getLat());%>,<%out.print(aInfo.getLang());%>);
+  var marker<%out.print(counter);%> = new google.maps.Marker({
+      position: myLatlng<%out.print(counter);%>,
+      map: map,
+      title: '<%out.print(aInfo.getPropertyType());%>'
+  });
+  google.maps.event.addListener(marker<%out.print(counter);%>, 'click', function() {
+    infowindow<%out.print(counter);%>.open(map,marker<%out.print(counter);%>);
+  });
+<%}
+			}%>
+}
+
+
+	
+
+google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</head>
+<body>
+	<div id="map-canvas"></div>
+</body>
+</html>
